@@ -1,13 +1,16 @@
 package io.github.linktosriram.s3lite.api.exception;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Objects;
+
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
 
 /**
  * Reference: https://docs.aws.amazon.com/AmazonS3/latest/API/ErrorResponses.html
  */
-@XmlRootElement(name = "Error")
+//@XmlRootElement(name = "Error")
 public class ErrorResponse {
 
     private String code;
@@ -18,7 +21,7 @@ public class ErrorResponse {
 
     private String hostId;
 
-    @XmlElement(name = "Code", required = true)
+    //@XmlElement(name = "Code", required = true)
     public String getCode() {
         return code;
     }
@@ -27,7 +30,7 @@ public class ErrorResponse {
         this.code = code;
     }
 
-    @XmlElement(name = "Message", required = true)
+    //@XmlElement(name = "Message", required = true)
     public String getMessage() {
         return message;
     }
@@ -36,7 +39,7 @@ public class ErrorResponse {
         this.message = message;
     }
 
-    @XmlElement(name = "RequestId", required = true)
+    //@XmlElement(name = "RequestId", required = true)
     public String getRequestId() {
         return requestId;
     }
@@ -45,7 +48,7 @@ public class ErrorResponse {
         this.requestId = requestId;
     }
 
-    @XmlElement(name = "HostId", required = true)
+    //@XmlElement(name = "HostId", required = true)
     public String getHostId() {
         return hostId;
     }
@@ -78,5 +81,34 @@ public class ErrorResponse {
             ", requestId='" + requestId + '\'' +
             ", hostId='" + hostId + '\'' +
             '}';
+    }
+    
+    public static ErrorResponse parseResponse(XMLEventReader rdr) throws XMLStreamException {
+    	ErrorResponse rsp = new ErrorResponse();
+    	while(rdr.hasNext()) {
+    		XMLEvent nxt = rdr.nextEvent();
+    		if (nxt.isStartElement()) {
+    			StartElement selem = nxt.asStartElement();
+    			switch (selem.getName().getLocalPart()) {
+    				case "Code":
+    					nxt = rdr.nextEvent();
+    					rsp.setCode(nxt.asCharacters().getData());
+    					break;
+    				case "Message":
+    					nxt = rdr.nextEvent();
+    					rsp.setMessage(nxt.asCharacters().getData());
+    					break;
+    				case "RequestId":
+    					nxt = rdr.nextEvent();
+    					rsp.setRequestId(nxt.asCharacters().getData());
+    					break;
+    				case "HostId":
+    					nxt = rdr.nextEvent();
+    					rsp.setHostId(nxt.asCharacters().getData());
+    					break;    					
+    			}
+    		}
+    	}
+    	return rsp;
     }
 }

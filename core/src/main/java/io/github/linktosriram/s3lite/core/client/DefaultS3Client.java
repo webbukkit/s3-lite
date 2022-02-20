@@ -35,14 +35,16 @@ import io.github.linktosriram.s3lite.http.spi.SdkHttpClient;
 import io.github.linktosriram.s3lite.http.spi.request.RequestBody;
 import io.github.linktosriram.s3lite.http.spi.response.ImmutableResponse;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
 
 import static io.github.linktosriram.s3lite.http.spi.HttpMethod.DELETE;
 import static io.github.linktosriram.s3lite.http.spi.HttpMethod.GET;
@@ -190,9 +192,9 @@ final class DefaultS3Client implements S3Client {
             return httpResponse.getResponseBody()
                 .map(inputStream -> {
                     try (final InputStream input = inputStream) {
-                        final ErrorResponse errorResponse = (ErrorResponse) JAXBContext.newInstance(ErrorResponse.class)
-                            .createUnmarshaller()
-                            .unmarshal(input);
+                    	XMLInputFactory fact = XMLInputFactory.newInstance();
+                    	XMLEventReader rdr = fact.createXMLEventReader(input);
+                        final ErrorResponse errorResponse = ErrorResponse.parseResponse(rdr);
 
                         switch (errorResponse.getCode()) {
                             case "NoSuchBucket":
@@ -202,11 +204,11 @@ final class DefaultS3Client implements S3Client {
                             default:
                                 return new S3Exception(errorResponse);
                         }
-                    } catch (final JAXBException e) {
-                        throw new RuntimeException(e);
                     } catch (final IOException e) {
                         throw new UncheckedIOException(e);
-                    }
+                    } catch (XMLStreamException e) {
+                        throw new RuntimeException(e);
+					}
                 })
                 .orElseThrow(() -> new RuntimeException("Service: S3, Status Code: " + status.getStatusCode()));
         }

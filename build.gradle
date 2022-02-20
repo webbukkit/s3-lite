@@ -1,9 +1,8 @@
-def projectVersion = "0.1.0"
+def projectVersion = "0.2.0"
 def group = "io.github.linktosriram"
 
 allprojects {
     apply plugin: 'java-library'
-    apply plugin: 'maven'
     apply plugin: 'maven-publish'
     apply plugin: 'eclipse'
     
