@@ -12,12 +12,12 @@ public class ListObjectsV2RequestMarshaller implements SdkRequestMarshaller<List
     public void accept(final SignableRequest signableRequest, final ListObjectsV2Request request) {
         signableRequest.addParameter("list-type", "2");
 
-        addParameterIfNotNull(signableRequest, "max-keys", request.getMaxKeys());
-        addParameterIfNotNull(signableRequest, "fetch-owner", request.getFetchOwner());
+        addParameterIfNotNull(signableRequest, "continuation-token", request.getContinuationToken());
         addParameterIfNotNull(signableRequest, "delimiter", request.getDelimiter());
         addParameterIfNotNull(signableRequest, "encoding-type", request.getEncodingType());
+        addParameterIfNotNull(signableRequest, "fetch-owner", request.getFetchOwner());
+        addParameterIfNotNull(signableRequest, "max-keys", request.getMaxKeys());
         addParameterIfNotNull(signableRequest, "prefix", request.getPrefix());
-        addParameterIfNotNull(signableRequest, "continuation-token", request.getContinuationToken());
         addParameterIfNotNull(signableRequest, "start-after", request.getStartAfter());
 
         addHeaderIfNotNull(signableRequest, "x-amz-request-payer", request.getRequestPayer());

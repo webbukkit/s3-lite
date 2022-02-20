@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 import static io.github.linktosriram.s3lite.http.spi.HttpStatus.fromStatusCode;
@@ -142,7 +143,12 @@ public class ApacheSdkHttpClient implements SdkHttpClient {
             .setPath(request.getResourcePath());
 
         if (!parameters.isEmpty()) {
-            builder.setCustomQuery(toQueryString(parameters));
+        	for (Entry<String, List<String>> p : parameters.entrySet()) {
+        		for (String v : p.getValue()) {
+        			builder.addParameter(p.getKey(), v);
+        		}
+        	}
+            //builder.setCustomQuery(toQueryString(parameters));
         }
 
         return builder.build();
