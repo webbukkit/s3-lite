@@ -61,6 +61,10 @@ public class RequestBody {
         return new RequestBody(() -> new ByteArrayInputStream(bytes), bytes.length);
     }
 
+    public static RequestBody fromBytes(final byte[] bytes, final int length) {
+        return new RequestBody(() -> new ByteArrayInputStream(bytes, 0, length), length);
+    }
+
     public static RequestBody fromString(final String contents, final Charset charset) {
         return fromBytes(contents.getBytes(charset));
     }
