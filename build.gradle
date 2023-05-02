@@ -1,5 +1,5 @@
 def projectVersion = "0.3.0"
-def group = "io.github.linktosriram"
+def group = "us.dynmap"
 
 allprojects {
     apply plugin: 'java-library'
