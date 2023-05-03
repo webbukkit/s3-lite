@@ -1,4 +1,4 @@
-def projectVersion = "0.3.0"
+def projectVersion = "0.3.1"
 def group = "us.dynmap"
 
 allprojects {
