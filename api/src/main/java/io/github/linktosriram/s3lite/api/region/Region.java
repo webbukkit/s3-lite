@@ -72,15 +72,15 @@ public class Region {
 	public static Region fromString(final String regionName) {
 		Region r = regionsByName.get(regionName);
 		if (r == null) {
-			// Assume it might be endpoint URL for custom endpoint
-			try {
-				URI ep = create(regionName);
-				r = new Region(regionName, ep);
-			} catch (IllegalArgumentException iax) {
-				throw new IllegalArgumentException("No matching region and not valid URL: " + regionName);
-			}
+			throw new IllegalArgumentException("No matching region: " + regionName);
 		}
 		return r;
+	}
+	public static Region getCustom(final String regionName, final String apiURL) {
+		URI uri = create(apiURL);
+		Region r = regionsByName.get(regionName);
+		if ((r != null) && (r.getEndpoint().getHost().equals(uri.getHost()))) return r;
+		return new Region(regionName, uri);
 	}
 
 	@Override
